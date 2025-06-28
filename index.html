@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Docker App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .status-box {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .api-section {
+            margin: 30px 0;
+        }
+        .endpoint {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #status-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐳 Flask Docker Application</h1>
+            <p>Successfully running in a Docker container!</p>
+        </div>
+
+        <div class="status-box">
+            <h3>✅ Container Status: Running</h3>
+            <p>This Flask application is containerized and running successfully.</p>
+        </div>
+
+        <div class="api-section">
+            <h3>🔗 Available API Endpoints</h3>
+            
+            <div class="endpoint">
+                <strong>GET /</strong> - This homepage
+            </div>
+            
+            <div class="endpoint">
+                <strong>GET /api/status</strong> - Application status with container info
+            </div>
+            
+            <div class="endpoint">
+                <strong>GET /health</strong> - Health check endpoint
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button onclick="checkStatus()">🔍 Check API Status</button>
+                <button onclick="checkHealth()">❤️ Health Check</button>
+            </div>
+
+            <div id="status-result"></div>
+        </div>
+
+        <div class="api-section">
+            <h3>🛠️ Docker Commands Used</h3>
+            <pre><code># Build the image
+docker build -t flask-docker-app .
+
+# Run the container
+docker run -p 5000:5000 flask-docker-app
+
+# Run in detached mode
+docker run -d -p 5000:5000 --name my-flask-app flask-docker-app</code></pre>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                document.getElementById('status-result').innerHTML = `
+                    <h4>API Status Response:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('status-result').innerHTML = `
+                    <h4>Error:</h4>
+                    <p style="color: red;">${error.message}</p>
+                `;
+            }
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('status-result').innerHTML = `
+                    <h4>Health Check Response:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <p style="color: green;">✅ Application is healthy!</p>
+                `;
+            } catch (error) {
+                document.getElementById('status-result').innerHTML = `
+                    <h4>Health Check Failed:</h4>
+                    <p style="color: red;">${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
